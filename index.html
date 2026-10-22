@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b12">
+<meta name="description" content="RPG Simulator Endless calculator for boss health, difficulty and Endless Coins.">
+<title>Endless Calculator | RPG Simulator</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #090910;
+    --panel: #11111b;
+    --panel-2: #171724;
+    --line: #51402a;
+    --line-soft: #292536;
+    --gold: #d9ad58;
+    --gold-bright: #f3d28a;
+    --purple: #9f73ed;
+    --text: #f4f1f8;
+    --muted: #a8a3b4;
+    --green: #a8e0c0;
+    --red: #f0a0a8;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { min-width: 300px; background: var(--bg); }
+  body {
+    margin: 0;
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    background:
+      radial-gradient(ellipse at 12% 0%, rgba(124, 81, 179, .16), transparent 36rem),
+      radial-gradient(ellipse at 88% 8%, rgba(217, 173, 88, .10), transparent 34rem),
+      var(--bg);
+  }
+  .wrap { width: min(1060px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 42px; }
+  header { text-align: center; margin: 0 auto 28px; }
+  .eyebrow { color: var(--gold); text-transform: uppercase; letter-spacing: .23em; font-size: .73rem; font-weight: 800; }
+  h1 { margin: 7px 0 4px; font-size: clamp(2rem, 5vw, 3.35rem); letter-spacing: .055em; line-height: 1.08; }
+  .subtitle { margin: 12px auto 0; color: var(--muted); max-width: 670px; font-size: .98rem; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+  .panel { background: linear-gradient(155deg, rgba(25,24,37,.97), rgba(13,13,22,.98)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 45px rgba(0,0,0,.22); }
+  .panel-head { padding: 19px 21px 15px; border-bottom: 1px solid var(--line-soft); background: rgba(255,255,255,.015); }
+  .section-kicker { color: var(--purple); font-size: .7rem; letter-spacing: .17em; font-weight: 850; text-transform: uppercase; }
+  h2 { margin: 3px 0 0; font-size: 1.32rem; letter-spacing: .015em; }
+  .panel-body { padding: 20px; }
+  .field { display: block; margin-bottom: 17px; }
+  .field-label { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; color: #e7e2ee; font-weight: 700; font-size: .87rem; margin-bottom: 8px; }
+  .field-label small { color: var(--muted); font-weight: 500; font-size: .75rem; }
+  input[type="number"] { width: 100%; background: #0b0b13; border: 1px solid #464052; color: var(--text); border-radius: 10px; padding: 12px 13px; font: inherit; font-size: 1rem; outline: none; transition: border-color .15s, box-shadow .15s; }
+  input[type="number"]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(217,173,88,.13); }
+  .segmented { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .segmented button { min-height: 42px; cursor: pointer; border: 1px solid #42394e; border-radius: 9px; background: #101019; color: var(--muted); font: inherit; font-weight: 750; transition: .15s ease; }
+  .segmented button:hover { border-color: var(--purple); color: var(--text); }
+  .segmented button[aria-pressed="true"] { color: #fff; background: rgba(159,115,237,.19); border-color: var(--purple); box-shadow: inset 0 0 0 1px rgba(159,115,237,.16); }
+  .results { display: grid; gap: 10px; margin-top: 22px; }
+  .result { border: 1px solid var(--line-soft); border-radius: 12px; padding: 13px 14px; background: rgba(0,0,0,.16); }
+  .result.main { border-color: rgba(217,173,88,.62); background: linear-gradient(105deg, rgba(217,173,88,.095), rgba(159,115,237,.055)); }
+  .result-label { color: var(--muted); font-size: .78rem; font-weight: 650; }
+  .result-value { color: var(--gold-bright); font-size: clamp(1.45rem, 3vw, 2rem); line-height: 1.23; font-weight: 850; letter-spacing: -.025em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .result-value.small { font-size: 1.28rem; color: var(--text); }
+  .result-note { color: var(--muted); font-size: .76rem; margin-top: 4px; }
+  .formula { margin: 15px 0 0; padding: 12px 13px; color: #c7c1d1; font-size: .78rem; background: rgba(0,0,0,.17); border-left: 2px solid var(--purple); border-radius: 0 8px 8px 0; }
+  .formula code { color: #f1d9a4; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; white-space: normal; overflow-wrap: anywhere; }
+  .toggle-list { display: grid; gap: 8px; margin: 2px 0 17px; }
+  .toggle { display: flex; gap: 11px; align-items: center; background: #0d0d16; border: 1px solid var(--line-soft); border-radius: 10px; padding: 11px 12px; cursor: pointer; }
+  .toggle input { accent-color: var(--gold); width: 17px; height: 17px; margin: 0; flex: 0 0 auto; }
+  .toggle-text { display: flex; flex: 1; justify-content: space-between; gap: 12px; font-size: .87rem; font-weight: 650; }
+  .toggle-text span:last-child { color: var(--gold-bright); white-space: nowrap; }
+  .multiplier-pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid #42394e; border-radius: 99px; padding: 5px 10px; color: var(--muted); font-size: .75rem; margin-top: 2px; }
+  .multiplier-pill strong { color: var(--gold-bright); }
+  .note { margin-top: 20px; border: 1px solid #3b3344; border-radius: 12px; padding: 13px 15px; color: var(--muted); font-size: .8rem; }
+  .note strong { color: #e7dfef; }
+  footer { text-align: center; padding-top: 23px; color: #797385; font-size: .75rem; }
+  @media (max-width: 760px) { .wrap { width: min(100% - 20px, 560px); padding-top: 25px; } .grid { grid-template-columns: 1fr; gap: 14px; } .panel-body { padding: 16px; } .panel-head { padding: 16px; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">RPG Simulator · Endless Mode</div>
+    <h1>ENDLESS CALCULATOR</h1>
+    <p class="subtitle">Estimate boss health, Endless difficulty and coin rewards. Boss encounters are calculated every 10 waves.</p>
+  </header>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="boss-title">
+      <div class="panel-head">
+        <div class="section-kicker">01 / Boss scaling</div>
+        <h2 id="boss-title">Boss Health</h2>
+      </div>
+      <div class="panel-body">
+        <label class="field">
+          <span class="field-label">Boss wave <small>multiples of 10</small></span>
+          <input id="bossWave" type="number" min="10" max="1000000" step="10" value="10" inputmode="numeric">
+        </label>
+        <div class="field">
+          <div class="field-label"><span>Players</span><small>1–4 players</small></div>
+          <div class="segmented" id="playerChoices" role="group" aria-label="Number of players">
+            <button type="button" data-players="1" aria-pressed="true">1</button>
+            <button type="button" data-players="2" aria-pressed="false">2</button>
+            <button type="button" data-players="3" aria-pressed="false">3</button>
+            <button type="button" data-players="4" aria-pressed="false">4</button>
+          </div>
+        </div>
+        <div class="results" aria-live="polite">
+          <div class="result"><div class="result-label">Difficulty before the boss</div><div class="result-value small" id="difficultyBefore">10%</div><div class="result-note">Difficulty used to calculate this boss.</div></div>
+          <div class="result main"><div class="result-label">Estimated boss health</div><div class="result-value" id="bossHealth">337.5B</div><div class="result-note" id="bossHealthDetail">1 player · base health 300B</div></div>
+          <div class="result"><div class="result-label">Difficulty after defeating the boss</div><div class="result-value small" id="difficultyAfter">20%</div><div class="result-note">Includes the +10% boss-clear increase.</div></div>
+        </div>
+        <p class="formula"><strong>Model:</strong> <code>HP = 300B × (1 + 1.25 × difficulty × players)</code><br>Difficulty at boss wave <code>W</code>: <code>19 × (W ÷ 10) − 9</code> percent.</p>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="coins-title">
+      <div class="panel-head">
+        <div class="section-kicker">02 / Rewards</div>
+        <h2 id="coins-title">Endless Coins</h2>
+      </div>
+      <div class="panel-body">
+        <label class="field">
+          <span class="field-label">Reached boss wave <small>multiples of 10</small></span>
+          <input id="coinsWave" type="number" min="10" max="1000000" step="10" value="10" inputmode="numeric">
+        </label>
+        <div class="toggle-list">
+          <label class="toggle"><input id="weekendBonus" type="checkbox"><span class="toggle-text"><span>Weekend bonus</span><span>×1.5</span></span></label>
+          <label class="toggle"><input id="doubleCoins" type="checkbox"><span class="toggle-text"><span>2× Coins</span><span>×2</span></span></label>
+        </div>
+        <div class="multiplier-pill">Active coin multiplier: <strong id="coinMultiplier">×1</strong></div>
+        <div class="results" aria-live="polite">
+          <div class="result main"><div class="result-label">Total coins up to this wave</div><div class="result-value" id="totalCoins">3</div><div class="result-note" id="totalCoinsBase">Base total: 3 coins</div></div>
+          <div class="result"><div class="result-label">Coins earned at this boss wave</div><div class="result-value small" id="waveCoins">3</div><div class="result-note" id="waveCoinsBase">Base reward for wave 10: 3 coins</div></div>
+        </div>
+        <p class="formula"><strong>Model:</strong> <code>Total = 3 × W × (W + 10) ÷ 200</code><br>Coins at this boss wave = <code>Total(W) − Total(W − 10)</code>.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="note"><strong>Note:</strong> These are estimates based on the observed Endless values: 300B base boss health, a 1.25 difficulty coefficient, +1% per wave and +10% after each boss. Coin multipliers are applied together when both options are selected. Actual game rounding may differ.</div>
+  <footer>Fan-made calculator · RPG Simulator · Not an official game tool</footer>
+</main>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const bossWaveInput = $('bossWave');
+  const coinsWaveInput = $('coinsWave');
+  let players = 1;
+
+  const normalizeWave = (input) => {
+    let wave = Number.parseInt(input.value, 10);
+    if (!Number.isFinite(wave) || wave < 10) wave = 10;
+    wave = Math.round(wave / 10) * 10;
+    wave = Math.min(1000000, Math.max(10, wave));
+    input.value = String(wave);
+    return wave;
+  };
+  const fmt = (value, maxDigits = 2) => new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: maxDigits,
+    minimumFractionDigits: 0
+  }).format(value);
+  const fmtPercent = (value) => `${fmt(value, 2)}%`;
+  const fmtCoins = (value) => `${fmt(value, 2)} coins`;
+  // Boss health is calculated in billions (B). Scale the displayed value and
+  // suffix automatically so large waves show T, Qa, Qi, etc. instead of B only.
+  const bossHealthUnits = [
+    { divisor: 1e27, suffix: 'Ud' },
+    { divisor: 1e24, suffix: 'Dc' },
+    { divisor: 1e21, suffix: 'No' },
+    { divisor: 1e18, suffix: 'Oc' },
+    { divisor: 1e15, suffix: 'Sp' },
+    { divisor: 1e12, suffix: 'Sx' },
+    { divisor: 1e9, suffix: 'Qi' },
+    { divisor: 1e6, suffix: 'Qa' },
+    { divisor: 1e3, suffix: 'T' },
+    { divisor: 1, suffix: 'B' }
+  ];
+  const fmtBossHealth = (healthInBillions) => {
+    const unit = bossHealthUnits.find(({ divisor }) => healthInBillions >= divisor) || bossHealthUnits[bossHealthUnits.length - 1];
+    return `${fmt(healthInBillions / unit.divisor, 3)}${unit.suffix}`;
+  };
+  const totalCoinsAt = (wave) => 3 * wave * (wave + 10) / 200;
+  const multiplier = () => ($('weekendBonus').checked ? 1.5 : 1) * ($('doubleCoins').checked ? 2 : 1);
+
+  function updateBoss() {
+    const wave = normalizeWave(bossWaveInput);
+    const difficulty = 19 * (wave / 10) - 9;
+    const health = 300 * (1 + 1.25 * (difficulty / 100) * players);
+    $('difficultyBefore').textContent = fmtPercent(difficulty);
+    $('bossHealth').textContent = fmtBossHealth(health);
+    $('bossHealthDetail').textContent = `${players} player${players === 1 ? '' : 's'} · base health 300B`;
+    $('difficultyAfter').textContent = fmtPercent(difficulty + 10);
+  }
+
+  function updateCoins() {
+    const wave = normalizeWave(coinsWaveInput);
+    const mult = multiplier();
+    const totalBase = totalCoinsAt(wave);
+    const previousTotal = totalCoinsAt(wave - 10);
+    const waveBase = totalBase - previousTotal;
+    $('coinMultiplier').textContent = `×${fmt(mult, 2)}`;
+    $('totalCoins').textContent = fmt(totalBase * mult, 2);
+    $('totalCoinsBase').textContent = `Base total: ${fmtCoins(totalBase)}${mult !== 1 ? ` · with bonuses: ${fmtCoins(totalBase * mult)}` : ''}`;
+    $('waveCoins').textContent = fmt(waveBase * mult, 2);
+    $('waveCoinsBase').textContent = `Base reward for wave ${fmt(wave)}: ${fmtCoins(waveBase)}${mult !== 1 ? ` · with bonuses: ${fmtCoins(waveBase * mult)}` : ''}`;
+  }
+
+  document.querySelectorAll('#playerChoices button').forEach((button) => {
+    button.addEventListener('click', () => {
+      players = Number(button.dataset.players);
+      document.querySelectorAll('#playerChoices button').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      updateBoss();
+    });
+  });
+  bossWaveInput.addEventListener('change', updateBoss);
+  coinsWaveInput.addEventListener('change', updateCoins);
+  $('weekendBonus').addEventListener('change', updateCoins);
+  $('doubleCoins').addEventListener('change', updateCoins);
+  updateBoss();
+  updateCoins();
+})();
+</script>
+</body>
+</html>
