@@ -110,7 +110,7 @@
           <div class="result main"><div class="result-label">Estimated boss health</div><div class="result-value" id="bossHealth">337.5B</div><div class="result-note" id="bossHealthDetail">1 player · base health 300B</div></div>
           <div class="result"><div class="result-label">Difficulty after defeating the boss</div><div class="result-value small" id="difficultyAfter">20%</div><div class="result-note">Includes the +10% boss-clear increase.</div></div>
         </div>
-        <p class="formula"><strong>Model:</strong> <code>HP = 300B × (1 + 1.25 × difficulty × players)</code><br>Difficulty at boss wave <code>W</code>: <code>19 × (W ÷ 10) − 9</code> percent.</p>
+        <p class="formula"><strong>Model:</strong> <code>HP = 300B × (1 + 1.25 × (D / 100) × P!)</code><br>Player factor <code>P!</code>: <code>1, 2, 6, 24</code> for 1–4 players. Difficulty at boss wave <code>W</code>: <code>D = 19 × (W ÷ 10) − 9</code> percent.</p>
       </div>
     </section>
 
@@ -138,7 +138,7 @@
     </section>
   </div>
 
-  <div class="note"><strong>Note:</strong> These are estimates based on the observed Endless values: 300B base boss health, a 1.25 difficulty coefficient, +1% per wave and +10% after each boss. Coin multipliers are applied together when both options are selected. Actual game rounding may differ.</div>
+  <div class="note"><strong>Note:</strong> These are estimates based on observed Endless values: 300B base boss health, a 1.25 difficulty coefficient, factorial player scaling (P! = 1, 2, 6, 24 for 1–4 players), +1% per wave and +10% after each boss. Coin multipliers are applied together when both options are selected. Actual game rounding may differ.</div>
   <footer>Fan-made calculator · RPG Simulator · Not an official game tool</footer>
 </main>
 <script>
@@ -186,10 +186,12 @@
   function updateBoss() {
     const wave = normalizeWave(bossWaveInput);
     const difficulty = 19 * (wave / 10) - 9;
-    const health = 300 * (1 + 1.25 * (difficulty / 100) * players);
+    // Observed player scaling follows the factorial: 1!, 2!, 3!, 4! = 1, 2, 6, 24.
+    const playerFactor = [1, 2, 6, 24][players - 1];
+    const health = 300 * (1 + 1.25 * (difficulty / 100) * playerFactor);
     $('difficultyBefore').textContent = fmtPercent(difficulty);
     $('bossHealth').textContent = fmtBossHealth(health);
-    $('bossHealthDetail').textContent = `${players} player${players === 1 ? '' : 's'} · base health 300B`;
+    $('bossHealthDetail').textContent = `${players} player${players === 1 ? '' : 's'} · group factor ${playerFactor}× · base health 300B`;
     $('difficultyAfter').textContent = fmtPercent(difficulty + 10);
   }
 
@@ -220,6 +222,10 @@
   updateBoss();
   updateCoins();
 })();
+</script>
+</body>
+</html>
+
 </script>
 </body>
 </html>
