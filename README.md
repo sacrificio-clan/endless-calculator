@@ -10,13 +10,13 @@ Página independente para calcular vida dos bosses da Endless, dificuldade por w
 4. Em **Build and deployment**, escolha **Deploy from a branch**.
 5. Selecione a branch `main` e a pasta `/ (root)`, depois salve.
 6. Quando a publicação terminar, a página deverá estar em:
-   <https://darkstar600000sacrificio-dot.github.io/endless-calculator/>
+   <https://sacrificio-clan.github.io/endless-calculator/>
 
 ## Link para colocar na wiki Fandom
 
 ```wikitext
 == Endless Calculator ==
-[https://darkstar600000sacrificio-dot.github.io/endless-calculator/ Endless Calculator — Boss HP & Endless Coins]
+[https://sacrificio-clan.github.io/endless-calculator/ Endless Calculator — Boss HP & Endless Coins]
 ```
 
 ## Fórmulas implementadas
